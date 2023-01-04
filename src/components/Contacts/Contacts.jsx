@@ -15,7 +15,24 @@ export class Contacts extends Component {
     ],
     filter: '',
   };
-  addPhone = data => {
+
+  componentDidMount() {
+    const contacts = JSON.parse(localStorage.getItem('contacts'));
+    if (contacts) {
+      this.setState({
+        contacts,
+      });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (prevState.contacts.length !== contacts.length) {
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+    }
+  }
+
+  addContacts = data => {
     if (
       this.state.contacts.find(
         contact => contact.name.toLowerCase() === data.name.toLowerCase()
@@ -70,10 +87,10 @@ export class Contacts extends Component {
   }
   render() {
     const contacts = this.getFilterContacts();
-    const { addPhone, removeContacts } = this;
+    const { addContacts, removeContacts } = this;
     return (
       <Container>
-        <FormAddPhone onSubmit={addPhone} />
+        <FormAddPhone onSubmit={addContacts} />
         <Filter handleFilter={this.handleFilter} />
         <PhonebookList items={contacts} removeContacts={removeContacts} />
       </Container>
